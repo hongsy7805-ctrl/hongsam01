@@ -18,18 +18,42 @@ themeToggle.addEventListener('click', () => {
 // ── 다국어 ────────────────────────────────────────
 const i18n = {
     ko: {
-        title:    '오늘 저녁 뭐 먹지?',
-        subtitle: '고민하지 말고 운에 맡겨봐요!',
-        btn:      '메뉴 추천받기',
-        langBtn:  'EN',
-        htmlLang: 'ko',
+        title:           '오늘 저녁 뭐 먹지?',
+        subtitle:        '고민하지 말고 운에 맡겨봐요!',
+        btn:             '메뉴 추천받기',
+        langBtn:         'EN',
+        htmlLang:        'ko',
+        formTitle:       '🤝 제휴 문의',
+        formDesc:        '광고, 제휴, 협업 등 문의사항을 남겨주세요.',
+        labelName:       '이름',
+        labelEmail:      '이메일',
+        labelMsg:        '문의 내용',
+        placeholderName: '홍길동',
+        placeholderEmail:'example@email.com',
+        placeholderMsg:  '문의 내용을 입력해주세요.',
+        submitBtn:       '보내기',
+        sending:         '전송 중...',
+        successMsg:      '✅ 문의가 전송되었습니다. 감사합니다!',
+        errorMsg:        '❌ 전송에 실패했습니다. 다시 시도해주세요.',
     },
     en: {
-        title:    "What's for Dinner?",
-        subtitle: "Stop overthinking — let fate decide!",
-        btn:      'Recommend Menus',
-        langBtn:  'KO',
-        htmlLang: 'en',
+        title:           "What's for Dinner?",
+        subtitle:        "Stop overthinking — let fate decide!",
+        btn:             'Recommend Menus',
+        langBtn:         'KO',
+        htmlLang:        'en',
+        formTitle:       '🤝 Partnership Inquiry',
+        formDesc:        'Leave us a message for ads, partnerships, or collaborations.',
+        labelName:       'Name',
+        labelEmail:      'Email',
+        labelMsg:        'Message',
+        placeholderName: 'John Doe',
+        placeholderEmail:'example@email.com',
+        placeholderMsg:  'Tell us about your inquiry...',
+        submitBtn:       'Send',
+        sending:         'Sending...',
+        successMsg:      '✅ Your message has been sent. Thank you!',
+        errorMsg:        '❌ Submission failed. Please try again.',
     },
 };
 
@@ -40,6 +64,9 @@ function applyLang(lang) {
     document.documentElement.lang = t.htmlLang;
     document.querySelectorAll('[data-i18n]').forEach(el => {
         el.textContent = t[el.dataset.i18n];
+    });
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+        el.placeholder = t[el.dataset.i18nPlaceholder];
     });
     langToggle.textContent = t.langBtn;
     currentLang = lang;
@@ -112,6 +139,41 @@ function recommend() {
 }
 
 recommendBtn.addEventListener('click', recommend);
+
+// ── 폼 제출 ──────────────────────────────────────
+const contactForm = document.getElementById('contact-form');
+const formSubmit  = document.getElementById('form-submit');
+const formStatus  = document.getElementById('form-status');
+
+contactForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const t = i18n[currentLang];
+    formSubmit.disabled = true;
+    formSubmit.textContent = t.sending;
+    formStatus.textContent = '';
+    formStatus.className = '';
+
+    try {
+        const res = await fetch(contactForm.action, {
+            method: 'POST',
+            body: new FormData(contactForm),
+            headers: { 'Accept': 'application/json' },
+        });
+        if (res.ok) {
+            formStatus.textContent = t.successMsg;
+            formStatus.className = 'success';
+            contactForm.reset();
+        } else {
+            throw new Error();
+        }
+    } catch {
+        formStatus.textContent = t.errorMsg;
+        formStatus.className = 'error';
+    } finally {
+        formSubmit.disabled = false;
+        formSubmit.textContent = i18n[currentLang].submitBtn;
+    }
+});
 
 // 초기 적용
 applyLang(currentLang);

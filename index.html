@@ -20,6 +20,27 @@
         <div id="menus"></div>
         <button id="recommend" data-i18n="btn">메뉴 추천받기</button>
     </div>
+
+    <div class="form-container">
+        <h2 class="form-title" data-i18n="formTitle">🤝 제휴 문의</h2>
+        <p class="form-desc" data-i18n="formDesc">광고, 제휴, 협업 등 문의사항을 남겨주세요.</p>
+        <form id="contact-form" action="https://formspree.io/f/mnjobnvz" method="POST">
+            <div class="form-group">
+                <label for="name" data-i18n="labelName">이름</label>
+                <input type="text" id="name" name="name" data-i18n-placeholder="placeholderName" placeholder="홍길동" required>
+            </div>
+            <div class="form-group">
+                <label for="email" data-i18n="labelEmail">이메일</label>
+                <input type="email" id="email" name="email" data-i18n-placeholder="placeholderEmail" placeholder="example@email.com" required>
+            </div>
+            <div class="form-group">
+                <label for="message" data-i18n="labelMsg">문의 내용</label>
+                <textarea id="message" name="message" rows="4" data-i18n-placeholder="placeholderMsg" placeholder="문의 내용을 입력해주세요." required></textarea>
+            </div>
+            <button type="submit" id="form-submit" data-i18n="submitBtn">보내기</button>
+            <p id="form-status"></p>
+        </form>
+    </div>
     <script src="main.js"></script>
 </body>
 </html>
