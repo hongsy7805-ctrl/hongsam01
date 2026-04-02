@@ -22,19 +22,30 @@ function generateNumbers() {
     return Array.from(numbers).sort((a, b) => a - b);
 }
 
-function displayNumbers(numbers) {
+function displayNumbers(setsOfNumbers) {
     numbersContainer.innerHTML = '';
-    for (const number of numbers) {
-        const numberEl = document.createElement('div');
-        numberEl.classList.add('number');
-        numberEl.textContent = number;
-        numbersContainer.appendChild(numberEl);
-    }
+    setsOfNumbers.forEach((numbers, i) => {
+        const row = document.createElement('div');
+        row.classList.add('number-row');
+
+        const label = document.createElement('span');
+        label.classList.add('row-label');
+        label.textContent = `${i + 1}`;
+        row.appendChild(label);
+
+        for (const number of numbers) {
+            const numberEl = document.createElement('div');
+            numberEl.classList.add('number');
+            numberEl.textContent = number;
+            row.appendChild(numberEl);
+        }
+        numbersContainer.appendChild(row);
+    });
 }
 
 function generateAndDisplayNumbers() {
-    const numbers = generateNumbers();
-    displayNumbers(numbers);
+    const sets = Array.from({ length: 5 }, generateNumbers);
+    displayNumbers(sets);
 }
 
 generateBtn.addEventListener('click', generateAndDisplayNumbers);

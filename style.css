@@ -59,7 +59,7 @@ body {
     border-radius: 15px;
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1), 0 6px 6px rgba(0, 0, 0, 0.15);
     width: 90%;
-    max-width: 500px;
+    max-width: 560px;
 }
 
 h1 {
@@ -70,10 +70,26 @@ h1 {
 
 .numbers {
     display: flex;
-    justify-content: center;
-    gap: 15px;
+    flex-direction: column;
+    gap: 12px;
     margin-bottom: 30px;
-    flex-wrap: wrap;
+}
+
+.number-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.row-label {
+    width: 24px;
+    font-size: 0.9em;
+    font-weight: bold;
+    color: var(--secondary-color);
+    opacity: 0.6;
+    text-align: right;
+    flex-shrink: 0;
 }
 
 .number {
