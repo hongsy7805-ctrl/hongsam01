@@ -32,24 +32,34 @@
     box-sizing: border-box;
 }
 
-#theme-toggle {
+.top-controls {
     position: fixed;
     top: 20px;
     right: 20px;
+    display: flex;
+    gap: 10px;
+    z-index: 100;
+}
+
+#theme-toggle,
+#lang-toggle {
     background-color: var(--toggle-bg);
     color: var(--toggle-color);
     border: none;
     border-radius: 50%;
     width: 48px;
     height: 48px;
-    font-size: 1.4em;
+    font-size: 1em;
+    font-weight: 700;
     cursor: pointer;
     box-shadow: 0 2px 8px rgba(0,0,0,0.3);
     transition: background-color 0.3s, transform 0.2s;
-    z-index: 100;
 }
 
-#theme-toggle:hover {
+#theme-toggle { font-size: 1.4em; }
+
+#theme-toggle:hover,
+#lang-toggle:hover {
     transform: scale(1.1);
 }
 
