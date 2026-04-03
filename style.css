@@ -345,3 +345,34 @@ h1 {
     position: relative;
     z-index: 1;
 }
+
+/* Animal test banner */
+.animal-banner {
+    width: 100%;
+    max-width: 520px;
+    margin-top: 16px;
+    position: relative;
+    z-index: 1;
+}
+.animal-banner a {
+    display: block;
+    background: linear-gradient(135deg, rgba(245,166,35,0.25), rgba(155,89,182,0.25));
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1.5px solid rgba(245,166,35,0.4);
+    border-radius: 16px;
+    padding: 14px 20px;
+    text-decoration: none;
+    color: var(--secondary-color);
+    font-weight: 700;
+    font-size: 0.95em;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+}
+.animal-banner a span {
+    color: var(--accent-color);
+}
+.animal-banner a:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+}
