@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>오늘 저녁 뭐 먹지?</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="top-controls">
+        <button id="lang-toggle" aria-label="Toggle language">EN</button>
+        <button id="theme-toggle" aria-label="Toggle dark mode">🌙</button>
+    </div>
+    <div class="container">
+        <div class="header">
+            <div class="emoji">🍽️</div>
+            <h1 data-i18n="title">오늘 저녁 뭐 먹지?</h1>
+            <p class="subtitle" data-i18n="subtitle">고민하지 말고 운에 맡겨봐요!</p>
+        </div>
+        <div id="menus"></div>
+        <button id="recommend" data-i18n="btn">메뉴 추천받기</button>
+    </div>
+
+    <div class="animal-banner">
+        <a href="index.html">
+            🐶🐱 나는 강아지상? 고양이상? <span>테스트 해보기 →</span>
+        </a>
+    </div>
+
+    <div class="form-container">
+        <h2 class="form-title" data-i18n="formTitle">🤝 제휴 문의</h2>
+        <p class="form-desc" data-i18n="formDesc">광고, 제휴, 협업 등 문의사항을 남겨주세요.</p>
+        <form id="contact-form" action="https://formspree.io/f/mnjobnvz" method="POST">
+            <div class="form-group">
+                <label for="name" data-i18n="labelName">이름</label>
+                <input type="text" id="name" name="name" data-i18n-placeholder="placeholderName" placeholder="홍길동" required>
+            </div>
+            <div class="form-group">
+                <label for="email" data-i18n="labelEmail">이메일</label>
+                <input type="email" id="email" name="email" data-i18n-placeholder="placeholderEmail" placeholder="example@email.com" required>
+            </div>
+            <div class="form-group">
+                <label for="message" data-i18n="labelMsg">문의 내용</label>
+                <textarea id="message" name="message" rows="4" data-i18n-placeholder="placeholderMsg" placeholder="문의 내용을 입력해주세요." required></textarea>
+            </div>
+            <button type="submit" id="form-submit" data-i18n="submitBtn">보내기</button>
+            <p id="form-status"></p>
+        </form>
+    </div>
+    <script src="main.js"></script>
+
+    <div class="disqus-container">
+        <div id="disqus_thread"></div>
+        <script>
+            (function() {
+            var d = document, s = d.createElement('script');
+            s.src = 'https://hongsam01-pages-dev.disqus.com/embed.js';
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+            })();
+        </script>
+        <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    </div>
+</body>
+</html>

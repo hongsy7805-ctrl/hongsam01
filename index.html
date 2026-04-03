@@ -3,63 +3,440 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>오늘 저녁 뭐 먹지?</title>
-    <link rel="stylesheet" href="style.css">
+    <title>🐾 나는 강아지상? 고양이상? 동물상 테스트</title>
+    <style>
+        :root {
+            --bg: #fff5f0;
+            --card-bg: rgba(255,255,255,0.82);
+            --card-border: rgba(255,200,170,0.6);
+            --accent: #ff6b35;
+            --accent-hover: #e85d2a;
+            --text: #1a1a1a;
+            --sub: #666;
+            --dog: #f5a623;
+            --cat: #9b59b6;
+        }
+        [data-theme="dark"] {
+            --bg: #12121c;
+            --card-bg: rgba(30,28,48,0.85);
+            --card-border: rgba(80,70,110,0.5);
+            --text: #f0f0f0;
+            --sub: #aaa;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Segoe UI', 'Apple SD Gothic Neo', sans-serif;
+            background-color: var(--bg);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px 60px;
+            transition: background-color 0.3s;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 50%, #d4a8e8 100%);
+            opacity: 0.35;
+            z-index: -1;
+        }
+
+        .top-controls {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+            z-index: 200;
+        }
+        .top-controls button {
+            background: rgba(30,30,30,0.85);
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            font-size: 1em;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            transition: transform 0.2s;
+        }
+        .top-controls button:hover { transform: scale(1.1); }
+
+        .card {
+            background: var(--card-bg);
+            backdrop-filter: blur(18px) saturate(1.4);
+            -webkit-backdrop-filter: blur(18px) saturate(1.4);
+            border: 1px solid var(--card-border);
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.18);
+            padding: 36px 32px;
+            width: 100%;
+            max-width: 520px;
+            text-align: center;
+        }
+
+        .hero-emoji { font-size: 3.5em; margin-bottom: 12px; }
+
+        h1 {
+            font-size: 1.8em;
+            color: var(--text);
+            margin-bottom: 8px;
+        }
+        .subtitle {
+            color: var(--sub);
+            font-size: 0.95em;
+            margin-bottom: 28px;
+            line-height: 1.6;
+        }
+
+        #start-btn {
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            border-radius: 14px;
+            padding: 16px 48px;
+            font-size: 1.1em;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 4px 16px rgba(255,107,53,0.4);
+            transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+        }
+        #start-btn:hover {
+            background: var(--accent-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(255,107,53,0.45);
+        }
+        #start-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Webcam section */
+        #webcam-section {
+            margin-top: 24px;
+            width: 100%;
+            max-width: 520px;
+            display: none;
+        }
+
+        .webcam-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(18px) saturate(1.4);
+            -webkit-backdrop-filter: blur(18px) saturate(1.4);
+            border: 1px solid var(--card-border);
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.18);
+            padding: 28px 24px;
+            text-align: center;
+        }
+
+        #webcam-wrapper {
+            position: relative;
+            display: inline-block;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 4px solid var(--accent);
+            box-shadow: 0 0 0 6px rgba(255,107,53,0.2);
+            margin-bottom: 20px;
+        }
+        #webcam-wrapper canvas {
+            display: block;
+            width: 220px !important;
+            height: 220px !important;
+        }
+
+        .loading-text {
+            color: var(--sub);
+            font-size: 0.9em;
+            margin-bottom: 16px;
+            min-height: 1.4em;
+        }
+
+        /* Result bars */
+        .result-bars {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .bar-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .bar-label {
+            font-size: 1.3em;
+            width: 36px;
+            flex-shrink: 0;
+        }
+        .bar-name {
+            font-size: 0.85em;
+            font-weight: 600;
+            color: var(--text);
+            width: 48px;
+            text-align: left;
+            flex-shrink: 0;
+        }
+        .bar-track {
+            flex: 1;
+            background: rgba(0,0,0,0.08);
+            border-radius: 20px;
+            height: 16px;
+            overflow: hidden;
+        }
+        .bar-fill {
+            height: 100%;
+            border-radius: 20px;
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+        .bar-fill.dog { background: linear-gradient(90deg, #f5a623, #f8c56d); }
+        .bar-fill.cat { background: linear-gradient(90deg, #9b59b6, #c39bd3); }
+        .bar-pct {
+            font-size: 0.85em;
+            font-weight: 700;
+            color: var(--text);
+            width: 38px;
+            text-align: right;
+            flex-shrink: 0;
+        }
+
+        /* Result card */
+        #result-card {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 16px;
+            border: 2px solid transparent;
+            transition: all 0.4s ease;
+        }
+        #result-card.dog {
+            background: rgba(245,166,35,0.12);
+            border-color: rgba(245,166,35,0.5);
+        }
+        #result-card.cat {
+            background: rgba(155,89,182,0.12);
+            border-color: rgba(155,89,182,0.5);
+        }
+        #result-emoji { font-size: 3em; margin-bottom: 8px; }
+        #result-title {
+            font-size: 1.3em;
+            font-weight: 800;
+            margin-bottom: 6px;
+            color: var(--text);
+        }
+        #result-desc {
+            font-size: 0.9em;
+            color: var(--sub);
+            line-height: 1.6;
+        }
+
+        /* Capture button */
+        #capture-btn {
+            margin-top: 16px;
+            background: rgba(0,0,0,0.08);
+            color: var(--text);
+            border: 1.5px solid var(--card-border);
+            border-radius: 12px;
+            padding: 10px 24px;
+            font-size: 0.9em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.15s;
+        }
+        #capture-btn:hover {
+            background: rgba(0,0,0,0.14);
+            transform: translateY(-1px);
+        }
+
+        /* Back link */
+        .back-link {
+            margin-top: 28px;
+            font-size: 0.88em;
+            color: var(--sub);
+        }
+        .back-link a {
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .back-link a:hover { text-decoration: underline; }
+
+        @media (max-width: 480px) {
+            h1 { font-size: 1.5em; }
+            .card { padding: 28px 20px; }
+            .webcam-card { padding: 20px 16px; }
+        }
+    </style>
 </head>
 <body>
     <div class="top-controls">
-        <button id="lang-toggle" aria-label="Toggle language">EN</button>
         <button id="theme-toggle" aria-label="Toggle dark mode">🌙</button>
     </div>
-    <div class="container">
-        <div class="header">
-            <div class="emoji">🍽️</div>
-            <h1 data-i18n="title">오늘 저녁 뭐 먹지?</h1>
-            <p class="subtitle" data-i18n="subtitle">고민하지 말고 운에 맡겨봐요!</p>
+
+    <!-- Intro card -->
+    <div class="card" id="intro-card">
+        <div class="hero-emoji">🐶🐱</div>
+        <h1>나는 강아지상? 고양이상?</h1>
+        <p class="subtitle">
+            AI가 웹캠으로 당신의 얼굴을 분석해<br>
+            강아지상인지 고양이상인지 알려드려요!
+        </p>
+        <button id="start-btn" onclick="init()">📷 테스트 시작하기</button>
+    </div>
+
+    <!-- Webcam + Result section -->
+    <div id="webcam-section">
+        <div class="webcam-card">
+            <p class="loading-text" id="loading-text">카메라를 불러오는 중...</p>
+
+            <div id="webcam-wrapper">
+                <div id="webcam-container"></div>
+            </div>
+
+            <div class="result-bars">
+                <div class="bar-row">
+                    <span class="bar-label">🐶</span>
+                    <span class="bar-name">강아지상</span>
+                    <div class="bar-track"><div class="bar-fill dog" id="bar-dog"></div></div>
+                    <span class="bar-pct" id="pct-dog">0%</span>
+                </div>
+                <div class="bar-row">
+                    <span class="bar-label">🐱</span>
+                    <span class="bar-name">고양이상</span>
+                    <div class="bar-track"><div class="bar-fill cat" id="bar-cat"></div></div>
+                    <span class="bar-pct" id="pct-cat">0%</span>
+                </div>
+            </div>
+
+            <div id="result-card">
+                <div id="result-emoji"></div>
+                <div id="result-title"></div>
+                <div id="result-desc"></div>
+            </div>
+
+            <button id="capture-btn" onclick="captureResult()">📸 결과 캡처하기</button>
         </div>
-        <div id="menus"></div>
-        <button id="recommend" data-i18n="btn">메뉴 추천받기</button>
     </div>
 
-    <div class="animal-banner">
-        <a href="animal-test.html">
-            🐶🐱 나는 강아지상? 고양이상? <span>테스트 해보기 →</span>
-        </a>
-    </div>
+    <p class="back-link">← <a href="menu.html">저녁 메뉴 추천으로 돌아가기</a></p>
 
-    <div class="form-container">
-        <h2 class="form-title" data-i18n="formTitle">🤝 제휴 문의</h2>
-        <p class="form-desc" data-i18n="formDesc">광고, 제휴, 협업 등 문의사항을 남겨주세요.</p>
-        <form id="contact-form" action="https://formspree.io/f/mnjobnvz" method="POST">
-            <div class="form-group">
-                <label for="name" data-i18n="labelName">이름</label>
-                <input type="text" id="name" name="name" data-i18n-placeholder="placeholderName" placeholder="홍길동" required>
-            </div>
-            <div class="form-group">
-                <label for="email" data-i18n="labelEmail">이메일</label>
-                <input type="email" id="email" name="email" data-i18n-placeholder="placeholderEmail" placeholder="example@email.com" required>
-            </div>
-            <div class="form-group">
-                <label for="message" data-i18n="labelMsg">문의 내용</label>
-                <textarea id="message" name="message" rows="4" data-i18n-placeholder="placeholderMsg" placeholder="문의 내용을 입력해주세요." required></textarea>
-            </div>
-            <button type="submit" id="form-submit" data-i18n="submitBtn">보내기</button>
-            <p id="form-status"></p>
-        </form>
-    </div>
-    <script src="main.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
+    <script>
+        const MODEL_URL = "https://teachablemachine.withgoogle.com/models/3dh2w4O1e/";
+        let model, webcam, maxPredictions;
+        let lastDominant = null;
 
-    <div class="disqus-container">
-        <div id="disqus_thread"></div>
-        <script>
-            (function() {
-            var d = document, s = d.createElement('script');
-            s.src = 'https://hongsam01-pages-dev.disqus.com/embed.js';
-            s.setAttribute('data-timestamp', +new Date());
-            (d.head || d.body).appendChild(s);
-            })();
-        </script>
-        <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-    </div>
+        const DOG_RESULTS = [
+            { emoji: "🐶", title: "완전 강아지상이에요!", desc: "눈이 크고 동글동글해서 보는 사람을 설레게 해요. 충성스럽고 따뜻한 분위기가 느껴지는 매력적인 얼굴이에요!" },
+            { emoji: "🐕", title: "강아지상 인증!", desc: "밝고 활기찬 에너지가 넘치는 얼굴이에요. 주변 사람들에게 웃음과 긍정 에너지를 전달하는 타입!" },
+            { emoji: "🦮", title: "귀여운 강아지상!", desc: "친근하고 다가가기 쉬운 인상이에요. 누구에게나 호감을 주는 얼굴을 가졌어요!" },
+        ];
+        const CAT_RESULTS = [
+            { emoji: "🐱", title: "완전 고양이상이에요!", desc: "눈매가 날카롭고 신비로운 분위기를 풍겨요. 도도하지만 매혹적인 매력의 소유자예요!" },
+            { emoji: "😺", title: "고양이상 인증!", desc: "세련되고 쿨한 이미지를 가진 얼굴이에요. 많은 사람들이 동경하는 스타일리시한 외모!" },
+            { emoji: "🐈", title: "신비로운 고양이상!", desc: "표정이 풍부하고 감각적인 분위기가 있어요. 알면 알수록 매력이 넘치는 타입!" },
+        ];
+
+        async function init() {
+            const btn = document.getElementById('start-btn');
+            btn.disabled = true;
+            btn.textContent = '로딩 중...';
+
+            try {
+                model = await tmImage.load(MODEL_URL + "model.json", MODEL_URL + "metadata.json");
+                maxPredictions = model.getTotalClasses();
+
+                webcam = new tmImage.Webcam(220, 220, true);
+                await webcam.setup();
+                await webcam.play();
+
+                document.getElementById('webcam-container').appendChild(webcam.canvas);
+                document.getElementById('intro-card').style.display = 'none';
+                document.getElementById('webcam-section').style.display = 'block';
+                document.getElementById('loading-text').textContent = '얼굴을 카메라에 맞춰보세요!';
+
+                window.requestAnimationFrame(loop);
+            } catch (e) {
+                btn.disabled = false;
+                btn.textContent = '📷 테스트 시작하기';
+                alert('카메라 접근에 실패했습니다. 카메라 권한을 허용해주세요.');
+            }
+        }
+
+        async function loop() {
+            webcam.update();
+            await predict();
+            window.requestAnimationFrame(loop);
+        }
+
+        async function predict() {
+            const prediction = await model.predict(webcam.canvas);
+
+            let dogProb = 0, catProb = 0;
+            for (const p of prediction) {
+                const name = p.className.toLowerCase();
+                if (name.includes('dog') || name.includes('강아지')) dogProb = p.probability;
+                else if (name.includes('cat') || name.includes('고양이')) catProb = p.probability;
+                else {
+                    // fallback: index 0 = dog, 1 = cat
+                    if (prediction.indexOf(p) === 0) dogProb = p.probability;
+                    else catProb = p.probability;
+                }
+            }
+
+            const dogPct = Math.round(dogProb * 100);
+            const catPct = Math.round(catProb * 100);
+
+            document.getElementById('bar-dog').style.width = dogPct + '%';
+            document.getElementById('bar-cat').style.width = catPct + '%';
+            document.getElementById('pct-dog').textContent = dogPct + '%';
+            document.getElementById('pct-cat').textContent = catPct + '%';
+
+            const dominant = dogProb >= catProb ? 'dog' : 'cat';
+
+            if (dominant !== lastDominant) {
+                lastDominant = dominant;
+                const results = dominant === 'dog' ? DOG_RESULTS : CAT_RESULTS;
+                const r = results[Math.floor(Math.random() * results.length)];
+                const card = document.getElementById('result-card');
+                card.className = dominant;
+                card.style.display = 'block';
+                document.getElementById('result-emoji').textContent = r.emoji;
+                document.getElementById('result-title').textContent = r.title;
+                document.getElementById('result-desc').textContent = r.desc;
+            }
+        }
+
+        function captureResult() {
+            const canvas = document.createElement('canvas');
+            const src = webcam.canvas;
+            canvas.width = src.width;
+            canvas.height = src.height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(src, 0, 0);
+
+            const link = document.createElement('a');
+            link.download = '동물상테스트결과.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+
+        // Dark mode
+        document.getElementById('theme-toggle').addEventListener('click', () => {
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            document.documentElement.setAttribute('data-theme', isDark ? '' : 'dark');
+            document.getElementById('theme-toggle').textContent = isDark ? '🌙' : '☀️';
+        });
+    </script>
 </body>
 </html>
