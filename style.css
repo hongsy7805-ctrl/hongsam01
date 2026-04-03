@@ -328,3 +328,12 @@ h1 {
 
 #form-status.success { color: #2ecc71; }
 #form-status.error   { color: #e74c3c; }
+
+.disqus-container {
+    max-width: 760px;
+    margin: 40px auto 60px;
+    padding: 32px;
+    background: var(--card-bg);
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+}
